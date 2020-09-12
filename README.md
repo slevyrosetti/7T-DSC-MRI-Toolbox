@@ -10,8 +10,8 @@ We thank you for choosing our toolbox! :heart: According to the Apache license 2
 
 # Table of Contents
 
-- [Code description](#codedescription)
-- [Data description](#datadescription)
+- [Code description](#code)
+- [Data description](#data)
 - [Funding](#funding)
 - [Team](#team)
 - [FAQ](#faq)
