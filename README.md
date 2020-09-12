@@ -1,23 +1,21 @@
 # :mag_right: :bulb: 7T-DSC-MRI-Toolbox :flashlight: :wrench: </font>
 
 <p align="center">
-This Python-based toolbox provides functions and pipeline to process Dynamic Susceptibility Contrast MRI data acquired at 7T. In particular, functions to extract acquisition times from physiologs (Siemens format) for cardiac-gated acquisitions, correct signal by effective TR and discard inconsistent TRs as well as to filter breathing frequencies in the signal based on the signal measured by any respiratory device in a repiration physiolog (Siemens format) are available.</p>
+This Python-based toolbox provides functions and pipeline to process Dynamic Susceptibility Contrast (DSC) MRI data acquired at 7T. A dataset of DSC MRI acquired in the spinal cord of a healthy volunteer as published in the reference below (healthy volunteer HC1) is also provided. More particularly, this toolbox provides functions to extract acquisition times from physiologs (Siemens format) for cardiac-gated acquisitions, correct signal by effective TR and discard inconsistent TRs as well as to filter breathing frequencies in the signal based on the signal measured by any respiratory device in a repiration physiolog (Siemens format) are available.</p>
 
 We thank you for choosing our toolbox! :heart: According to the Apache license 2.0, please cite the following reference:
 > **Lévy S, Roche P-H, Callot V. Dynamic Susceptibility Contrast imaging at 7T for spinal cord perfusion mapping in Cervical Spondylotic Myelopathy patients, In: *Proc. Intl. Soc. Mag. Reson. Med. 28*. 2019;3195.**
 
 # Code description
 
-This toolbox so far provides the following functions:
-  - `dsc_image2concentration.py`: fit IVIM biexponential signal representation to NIFTI data according to specified fitting approach
-  - `ivim_view_fits.py`: display an IVIM parameter map and enable user to inspect fitting by clicking on any voxel and display corresponding fit plot
-  - `ivim_simu_compute_error_nonoise.py`: compute error of a given fitting approach according to true IVIM values
-  - `ivim_simu_plot_error_nonoise.py`: plot results from previous tool
-  - `ivim_simu_compute_error_noise.py`: compute error of a given fitting approach according to true IVIM values for a given SNR (Monte Carlo simulations)
-  - `ivim_simu_plot_error_noise.py`: plot results from previous tool
-  - `ivim_simu_compute_required_snr.py`: compute required SNR to estimate parameters within 10% error margins for a given fitting approach and according to true IVIM values
-  - `ivim_simu_plot_required_snr.py`: plot results from previous tool
-  - `ivim_toolbox.py`: launch the graphical user interface
+This toolbox includes Python scripts that be run directly from a bash environment as well as Python functions that are called by the scripts. Here is an overview of those functions:
+  - `dsc_image2concentration.py`: this script converts a time-series 4D volume to contrast agent concentration values after voxel-wise signal processing
+  - `dsc_process_signal_by_slice.py`: this script performs similar processing as `dsc_image2concentration` but on the mean signal in a given region of interest and by slice
+  - `dsc_dataQuality.py`: this script provides temporal SNR maps and signal-time profile of a given region of interest for a 4D volume
+  - `dsc_utils.py`: this function provides the main methods for DSC signal processing and filtering that are called by the scripts above
+  - `dsc_pipelines.py`: this function proposes methods calling methods for signal processing from `dsc_utils`
+  - `dsc_extract_physio.py`: this function provides methods to extract acquisition times of each repetition in times series acquired on Siemens systems provided a physiolog file.
+
 
 ### dsc_image2concentration
 
