@@ -37,3 +37,6 @@ optional arguments:
 
 Note that if you use `-r2 1`, the obtained value will correspond to the variation of relaxation rate (R2 or R2* depending on whether acquired data are spin-echo or gradient-echo)
 
+
+*This work was performed within the [CRMBM-CEMEREM](http://crmbm.univ-amu.fr/) (UMR 7339, CNRS / Aix-Marseille University), which is a laboratory member of France Life Imaging network (grant #ANR-11-INBS-0006). The project received funding from the European Union’s Horizon 2020 research and innovation program (Marie Skłodowska-Curie grant agreement #713750), the Regional Council of Provence-Alpes-Côte d’Azur, A\*MIDEX (#ANR-11-IDEX-0001-02, #7T-AMI-ANR-11-EQPX-0001, #A\*MIDEX-EI-13-07-130115-08.38-7T-AMISTART) and CNRS (Centre National de la Recherche Scientifique).*
+
