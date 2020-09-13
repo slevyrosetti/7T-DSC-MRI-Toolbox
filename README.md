@@ -10,22 +10,18 @@ We thank you for choosing our toolbox! :heart: According to the Apache license 2
 
 # Table of Contents
 
-- [Code description](#code)
-- [Data description](#data)
+- [Code description](#code-description)
+- [Data description](#data-description)
 - [Funding](#funding)
-- [Team](#team)
-- [FAQ](#faq)
-- [Support](#support)
-- [License](#license)
 
 ---
 
 # Code description
 
 This toolbox includes Python scripts that be run directly from a bash environment as well as Python functions that are called by the scripts. Here is an overview of those functions:
-  - `dsc_image2concentration.py`: this script converts a time-series 4D volume to contrast agent concentration values after voxel-wise signal processing
-  - `dsc_process_signal_by_slice.py`: this script performs similar processing as `dsc_image2concentration` but on the mean signal in a given region of interest and by slice
-  - `dsc_dataQuality.py`: this script provides temporal SNR maps and signal-time profile of a given region of interest for a 4D volume
+  - `dsc_image2concentration.py`: this program converts a time-series 4D volume to contrast agent concentration values after voxel-wise signal processing
+  - `dsc_process_signal_by_slice.py`: this program performs similar processing as `dsc_image2concentration` but on the mean signal in a given region of interest and by slice
+  - `dsc_dataQuality.py`: this program provides temporal SNR maps and signal-time profile of a given region of interest for a 4D volume
   - `dsc_utils.py`: this function provides the main methods for DSC signal processing and filtering that are called by the scripts above
   - `dsc_pipelines.py`: this function proposes methods calling methods for signal processing from `dsc_utils`
   - `dsc_extract_physio.py`: this function provides methods to extract acquisition times of each repetition in times series acquired on Siemens systems provided a physiolog file.
@@ -33,7 +29,7 @@ This toolbox includes Python scripts that be run directly from a bash environmen
 
 ## dsc_image2concentration
 
-This scripts takes an Nifti 4D image as input and converts it to the value of variation of the contrast agent concentration value (Delta_C). Below are the available options:
+This program takes an Nifti 4D image as input and converts it to the value of variation of the contrast agent concentration value (Delta_C). Below are the available options:
 ```
 required arguments:
   -i IFNAME             Path to MRI data file.
@@ -55,7 +51,7 @@ Note that if you use `-r2 1`, the obtained value will correspond to the variatio
 
 ## dsc_process_signal_by_slice
 
-This script performs the same processing as `dsc_image2concentration` but on the mean signal within a given region of interest (input of `-m` flag), all slices averaged and slice-by-slice. The results are saved as a .mat file and a pickle file. Below are the available options:
+This program performs the same processing as `dsc_image2concentration` but on the mean signal within a given region of interest (input of `-m` flag), all slices averaged and slice-by-slice. The results are saved as a .mat file and a pickle file. Below are the available options:
 ```
 required arguments:
   -i IFNAME             Path to MRI data file.
@@ -78,11 +74,33 @@ optional arguments:
                         Proc. Intl. Soc. Mag. Reson. Med. 16 (2008) 1457]
 ```
 
+## dsc_dataQuality
 
+This program plots ∆R2 along time, mean image and temporal SNR maps from a 4D time-series volume.
+
+```
+required arguments:
+  -i IMGFNAME         Path to NII data file.
+  -m MASKFNAME        Path to NII mask file.
+  -dcm DCMFOLDER      Dicom folder path.
+  -p PHYSIOLOGFOLDER  Physiologs folder path.
+  -l DATALABEL        Label or title for the plot.
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -b BASELINEENDREP   Last repetition of the baseline.
+ ```
+ 
 
 ---
 
 # Data description
+
+In the **data** you will find a dataset (*se_epi_hc1.nii.gz*) acquired with a spin-echo single-shot EPI sequence within the spinal cord of a healthy volunteer (HC1 in the reference above) at 7T and with contrast agent bolus injection (this dataset has already been processed to address Gibbs ringing artifacts, motion, noise and distortions using `mrdegibbs` from MRTrX toolbox, rigid transformations with ANTs, BM4D and FSL Topup respectively).
+The file *maskForCalculations.nii.gz* is a simple 3D mask that can be used with `dsc_image2concentration` to restrict calculations around the spinal cord to reduce computation time.
+You will also find a folder named **physiolog** containing the physiolog files of the pulse oximeter (*slr_Physiolog_hc1.puls*) and of the respiratory belt (*slr_Physiolog_hc1.resp*) which are used for effective TR normalization and breathing frequencies filtering.
+Finally, the folder **results_you_should_get** provides the maps of Bolus Arrival Time (*BAT.nii.gz*), relative Blood Flow (*rBF.nii.gz*), relative Blood Volume (*rBV.nii.gz*) and Time-to-Peak (*rTTP.nii.gz*).
+
 
 ---
 
