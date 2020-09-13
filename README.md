@@ -37,6 +37,7 @@ As explained in the introduction, this toolbox also provides functions and pipel
   - `dsc_map_rBV_rBF.m` and `dsc_map_BAT_TT_TTP_rTTP_PR.m` are called by `dsc_calculatePerfMetricsVoxelWise` to calcualte relative Blood Volume, relative Blood Flow, Bolus Arrival Time, Transit Time, Time-to-Peak from t=0, Time-to-Peak from bolus arrival time and Peak Ratio
   - `dsc_calculate_BAT_TT_TTP_rTTP.m`: this function is used in `dsc_map_BAT_TT_TTP_rTTP_PR` to calculate Bolus Arrival Time, Transit Time, Time-to-Peak from t=0, Time-to-Peak from bolus arrival time.
 
+Some of the programs of the toolbox are further detailed below.
 
 ## dsc_image2concentration
 
