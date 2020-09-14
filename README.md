@@ -12,9 +12,17 @@ This toolbox also provides functions and pipeline to fit a Gamma-variate functio
 
 # Table of Contents
 
+- [System requirements](#system-requirements)
 - [Code description](#code-description)
 - [Data description](#data-description)
 - [Funding](#funding)
+
+---
+
+# System requirements
+
+The Python programs work with Python3.6 and require the following libraries: nibabel, numpy, scipy.io, argparse, \_pickle, sys, os
+The code has been developed under MacOSX and should easily work under Linux (although not tested yet) but similar performance cannot be promised so far under Windows systems.
 
 ---
 
