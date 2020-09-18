@@ -1365,11 +1365,11 @@ def plot_DeltaR2_perSlice(time,
     else:
         injRep = 0
 
-    DeltaR2, tSD = calculateDeltaR2(signal, TE, injRep=injRep)
+    DeltaR2, tSD, _ = calculateDeltaR2(signal, TE, injRep=injRep)
 
     # plot each slice
     if lateralTitle:
-        ylabel = axis.set_ylabel('$\Delta{}R_2\ (s^{-1})$', rotation=90, labelpad=0.5, fontsize=15)
+        ylabel = axis.set_ylabel('$\Delta{}R_2^{(*)}\ (s^{-1})$', rotation=90, labelpad=0.5, fontsize=15)
         axis.text(ylabel.get_position()[0]-0.31, ylabel.get_position()[1], lateralTitle, fontsize=17, transform=axis.transAxes)
     axis.set_title(superiorTitle, fontsize=18, pad=30)
     axis.set_xlabel(xlabel, fontsize=18)
@@ -1384,7 +1384,7 @@ def plot_DeltaR2_perSlice(time,
         axis.plot(time[i_slice, :], DeltaR2[i_slice, :], color=colorSlices[i_slice], lw=1.5)
 
     if signalLabels: axis.legend(signalLabels, loc='center', bbox_to_anchor=(0.5, 1.17), ncol=4, fancybox=True, shadow=True, fontsize=17)
-    if stats: axis.text(0.01, 0.01, 'tSD for '+', '.join(signalLabels)+' = '+str(np.array2string(tSD, precision=2, separator=' | ')), transform=axis.transAxes, fontsize=9, verticalalignment='bottom', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.7))
+    if stats: axis.text(0.01, 0.01, 'tSD for '+', '.join(signalLabels[1:])+' = '+str(np.array2string(tSD, precision=2, separator=' | ')), transform=axis.transAxes, fontsize=9, verticalalignment='bottom', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.7), zorder=11)
     if ylims: axis.set_ylim(ylims)
 
     # plot discarded acquisitions if asked
@@ -1406,7 +1406,7 @@ def plot_DeltaR2_perSlice(time,
 
 
 #%%
-def calculateDeltaR2(signal, TE, injRep=0):
+def calculateDeltaR2(signal, TE, injRep=0, r2=1):
 
     """
 
@@ -1424,14 +1424,14 @@ def calculateDeltaR2(signal, TE, injRep=0):
     else:
         S0 = np.mean(signal, axis=-1)
     S_over_S0 = np.divide(signal, np.tile(S0, (signal.shape[1], 1)).T)
-    DeltaR2 = - np.log(S_over_S0) / (TE / 1000)
+    DeltaR2 = - np.log( S_over_S0 ) / ( r2 * TE / 1000 )
     # calculate tSD (and not tCOV because in ∆R2 the mean is 0)
     if np.array([injRep]).any():
         tSD = np.array([np.std(DeltaR2[i_signal, 0:injRep[i_signal]+1]) for i_signal in range(signal.shape[0])])  #cov_baseline = dsc_utils.get_temporalCOV(DeltaR2[:, 0:injRep])
     else:
         tSD = np.std(DeltaR2, axis=-1)  #cov_baseline = dsc_utils.get_temporalCOV(DeltaR2)
 
-    return DeltaR2, tSD
+    return DeltaR2, tSD, S0
 
 
 def saveAsNifti(OldNii, data, oFname, dataType=np.float32):
