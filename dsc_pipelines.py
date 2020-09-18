@@ -127,8 +127,8 @@ def computeDeltaR2withinROI(iFname, maskFname, physioLogFname, TE):
     # ----------------------------------------------------------------------------------------------------------------------
     # Convert signal to ∆R2: ∆R2(t) = -1/TE*log(S(t)/S0)
     # ----------------------------------------------------------------------------------------------------------------------
-    DeltaR2, tSD = dsc_utils.calculateDeltaR2(dsc_mean_slices_TRfiltered, TE)
-    DeltaR2_afterFilters, tSD_afterFilters = dsc_utils.calculateDeltaR2(dsc_mean_slices_smoothed, TE)
+    DeltaR2, tSD, _ = dsc_utils.calculateDeltaR2(dsc_mean_slices_TRfiltered, TE)
+    DeltaR2_afterFilters, tSD_afterFilters, _ = dsc_utils.calculateDeltaR2(dsc_mean_slices_smoothed, TE)
 
 
     return DeltaR2, DeltaR2_afterFilters
