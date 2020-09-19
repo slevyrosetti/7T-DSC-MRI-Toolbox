@@ -26,12 +26,12 @@ def main(imgFname, maskFname, dcmFolder, physiologFolder, dataLabel, baselineEnd
     # ----------------------------------------------------------------------------------------------------------------------
     # Get physiolog file and TE
     # ----------------------------------------------------------------------------------------------------------------------
-    physioLogFname, TE, gap, TR = dsc_utils.get_physiologFname_from_dcm(dcmFolder, physiologFolder)
+    physioLogFname, TE, gap, TR, acqTime_firstImg, resolution = dsc_utils.get_physiologFname_from_dcm(dcmFolder, physiologFolder)
 
     # ----------------------------------------------------------------------------------------------------------------------
     # Process signal (SC, slices)
     # ----------------------------------------------------------------------------------------------------------------------
-    acqTime, signals, acqTime_TRfilt, signals_TRfilt, idxAcqToDiscard, signals_breath, signals_smooth, timePhysio, valuesPhysio = dsc_pipelines.processSignal_bySlice(imgFname, maskFname, physioLogFname, TE)
+    acqTime, signals, acqTime_TRfilt, signals_TRfilt, idxAcqToDiscard, signals_breath, signals_smooth, timePhysio, valuesPhysio = dsc_pipelines.processSignal_bySlice(imgFname, maskFname, physioLogFname, acqTime_firstImg)
 
     # ----------------------------------------------------------------------------------------------------------------------
     # Plot result figure

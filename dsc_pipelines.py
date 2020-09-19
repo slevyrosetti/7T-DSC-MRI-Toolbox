@@ -134,7 +134,7 @@ def computeDeltaR2withinROI(iFname, maskFname, physioLogFname, TE):
     return DeltaR2, DeltaR2_afterFilters
 
 #%%
-def processSignal_bySlice(iFname, maskFname, physioLogFname, TE):
+def processSignal_bySlice(iFname, maskFname, physioLogFname, acqTime_firstImg):
 
     # load data
     img = nib.load(iFname).get_data()  # MRI image
@@ -149,7 +149,7 @@ def processSignal_bySlice(iFname, maskFname, physioLogFname, TE):
     # repsAcqTime: ((SC+all slices) x Nacq x (PulseOx, Resp)
     # timePhysio: N_pulseOx_points x ((PulseOx, Resp)
     # valuesPhysio: N_pulseOx_points x ((PulseOx, Resp)
-    repsAcqTime, timePhysio, valuesPhysio = dsc_utils.extract_acqtime_and_physio_by_slice(physioLogFname, img.shape[2], img.shape[3])
+    repsAcqTime, timePhysio, valuesPhysio = dsc_utils.extract_acqtime_and_physio_by_slice(physioLogFname, img.shape[2], img.shape[3], acqTime_firstImg)
 
     # reorder the acquisition times of each slice according to the acquisition scheme ("interleaved", "ascending",
     # "descending") [ONLY IF 3 SLICES ACQUIRED]
