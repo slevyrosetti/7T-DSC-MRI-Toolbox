@@ -58,18 +58,13 @@ def main(iFname, oFname, duration, cropX, cropY, cropT, processSHFilename, maskF
         else:
 
             # apply signal processing pipeline
-            acqTime, signals, acqTime_TRfilt, signals_TRfilt, idxAcqToDiscard, signals_breath, signals_smooth, timePhysio, valuesPhysio = dsc_pipelines.processSignal_bySlice(
-                iFname, maskFname, physioLogFname, acqTime_firstImg)
-            # extract mean signal in mask
-            mask = nib.load(maskFname).get_data()  # MRI image
-            meanSignal, __ = dsc_utils.extract_signal_within_roi(data4d, mask)
+            acqTime, signals, acqTime_TRfilt, signals_TRfilt, idxAcqToDiscard, signals_breath, signals_smooth, timePhysio, valuesPhysio = dsc_pipelines.processSignal_bySlice(iFname, maskFname, physioLogFname, acqTime_firstImg)
+
             # convert to ∆R2(*)
-            DeltaR2, _, _ = dsc_utils.calculateDeltaR2(meanSignal[np.newaxis, :], TE, injRep=15)
+            DeltaR2, _, _ = dsc_utils.calculateDeltaR2(signals[np.newaxis, 0, :], TE, injRep=0)
 
             # discard wrong TRs to compute temporal SD
-            TReff = np.append(np.diff(repsAcqTime[0, :, 0])[0], np.diff(repsAcqTime[0, :, 0]))
-            signals_TRfilt, repsAcqTime_PulseOx_TRfilt, repsAcqTime_Resp_TRfilt, idxAcqToDiscard, cardiacPeriod = dsc_utils.discardWrongTRs(TReff, timePhysio[:, 0], valuesPhysio[:, 0], meanSignal, repsAcqTime[:, :, 0], repsAcqTime[:, :, 1], outPlotFname='')
-            DeltaR2_TRfilt, tSD_TRfilt, _ = dsc_utils.calculateDeltaR2(signals_TRfilt[np.newaxis, cropT[0]:cropT[1]], TE, injRep=0)
+            DeltaR2_TRfilt, tSD_TRfilt, _ = dsc_utils.calculateDeltaR2(signals_TRfilt[np.newaxis, 0, cropT[0]:cropT[1]], TE, injRep=0)
             print('\n>>> Temporal ∆R2(*) SD on signal without inconsistent TRs in s-1 = '+str(np.round(tSD_TRfilt,3)))
             # pulseOxSignalMax, pulseOxSignalMin = dsc_utils.peakdet(values_PulseOx, 700)
             # cardiacPeriods = np.diff(Time_PulseOx[pulseOxSignalMax[:, 0].astype(int)])  # in milliseconds
@@ -90,38 +85,45 @@ def main(iFname, oFname, duration, cropX, cropY, cropT, processSHFilename, maskF
             repsAcqTime[0, :, 0] = repsAcqTime[0, :, 0] - repsAcqTime[0, cropT[0], 0]
             for i_vol in range(cropT[0], cropT[1] + 1):
 
-                vol_3slices_view = np.concatenate((np.rot90(data4d[cropX[0]:cropX[1], cropY[0]:cropY[1], 0, i_vol]),
-                                                   np.rot90(data4d[cropX[0]:cropX[1], cropY[0]:cropY[1], 1, i_vol]),
-                                                   np.rot90(data4d[cropX[0]:cropX[1], cropY[0]:cropY[1], 2, i_vol])), axis=1)
-                fig_i_vol, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 3))
-                plt.subplots_adjust(wspace=0.1, left=0.1, right=0.99, hspace=0.0, bottom=0.2, top=0.95)
+                if i_vol not in idxAcqToDiscard:  # remove inconsistent TRs
 
-                ax1.imshow(vol_3slices_view, cmap='gray', vmin=10, vmax=600)
-                # ax1.imshow(mask_3slices_view, cmap='Blues', alpha=0.5, clim=(.5, 1))
-                # ax1.set_axis_off()
-                ax1.set_xlabel('Rep #'+str(i_vol))
-                ax1.tick_params(left=False, labelleft=False, bottom=False, labelbottom=False)
-                ax1.patch.set_visible(False)
+                    vol_3slices_view = np.concatenate((np.rot90(data4d[cropX[0]:cropX[1], cropY[0]:cropY[1], 0, i_vol]),
+                                                       np.rot90(data4d[cropX[0]:cropX[1], cropY[0]:cropY[1], 1, i_vol]),
+                                                       np.rot90(data4d[cropX[0]:cropX[1], cropY[0]:cropY[1], 2, i_vol])), axis=1)
+                    fig_i_vol, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 3))
+                    plt.subplots_adjust(wspace=0.1, left=0.1, right=0.99, hspace=0.0, bottom=0.2, top=0.95)
 
-                ax2.plot(repsAcqTime[0, :, 0]/1000, DeltaR2[0, :], color='tab:blue', lw=2.0)
-                ax2.axvline(x=repsAcqTime[0, i_vol, 0]/1000, color='red')
-                ax2.axhline(y=DeltaR2[0, i_vol], color='red')
-                ax2.set_xlim([repsAcqTime[0, cropT[0], 0]/1000, repsAcqTime[0, cropT[1], 0]/1000])
-                ax2.set_ylim([-3.0, 3.0])  #ax2.set_ylim([200, 290])
-                ax2.set_xlabel('Time (s)')
-                ax2.set_ylabel('$\Delta{}R_2\ (s^{-1})$')
-                ax2.grid()
+                    ax1.imshow(vol_3slices_view, cmap='gray', vmin=10, vmax=600)
+                    # ax1.imshow(mask_3slices_view, cmap='Blues', alpha=0.5, clim=(.5, 1))
+                    # ax1.set_axis_off()
+                    ax1.set_xlabel('Rep #'+str(i_vol))
+                    ax1.tick_params(left=False, labelleft=False, bottom=False, labelbottom=False)
+                    ax1.patch.set_visible(False)
 
-                # ax2physio = ax2.twinx()
-                # ax2physio.plot(Time_Resp/1000, values_Resp/1000, color='black', alpha=0.5, lw=0.7, label='respiratory signal')
-                # ax2physio.tick_params(right=False, labelright=False)
-                # ax2physio.legend(loc='upper right')
+                    # ax2.plot(repsAcqTime[0, :, 0]/1000, DeltaR2[0, :], color='tab:blue', lw=2.0)
+                    # Below: for the figure on the effects of swallowing to show breathing instructions
+                    if i_vol in [70, 71, 72, 73, 120, 121, 122, 123, 160, 161, 162, 163, 200, 201, 202, 203, 240, 241, 242, 243]:
+                        ax2.set_facecolor('tab:olive')
+                    ax2.plot(acqTime[0, :, 0]/1000, DeltaR2[0, :], color='tab:blue', lw=2.0)
+                    ax2.axvline(x=acqTime[0, i_vol, 0]/1000, color='red')
+                    ax2.axhline(y=DeltaR2[0, i_vol], color='red')
+                    # ax2.set_xlim([repsAcqTime[0, cropT[0], 0]/1000, repsAcqTime[0, cropT[1], 0]/1000])
+                    ax2.set_ylim([-6.0, 7.0])  #ax2.set_ylim([200, 290])
+                    ax2.set_xlabel('Time (s)')
+                    ax2.set_ylabel('$\Delta{}R_2\ (s^{-1})$')
+                    ax2.grid()
 
-                fig_i_vol.savefig(tmpDirPath + '/frame' + str(i_vol) + '.jpeg', transparent=True)
-                plt.close(fig_i_vol)
+                    # ax2physio = ax2.twinx()
+                    # ax2physio.plot(Time_Resp/1000, values_Resp/1000, color='black', alpha=0.5, lw=0.7, label='respiratory signal')
+                    # ax2physio.tick_params(right=False, labelright=False)
+                    # ax2physio.legend(loc='upper right')
+
+                    fig_i_vol.savefig(tmpDirPath + '/frame' + str(i_vol) + '.jpeg', transparent=False)
+                    plt.close(fig_i_vol)
 
         # prepare and run the imageMagick command with variable effective TR
         shellCmd = 'convert '
+        TReff = np.append(np.diff(repsAcqTime[0, :, 0])[0], np.diff(repsAcqTime[0, :, 0]))
         for i_vol in range(data4d.shape[3]):
             shellCmd += '-delay '+str(TReff[i_vol]/100)+' '+ tmpDirPath + '/frame' + str(i_vol) + '.jpeg '
         shellCmd += '-loop 0 '+oFname+'.gif'
