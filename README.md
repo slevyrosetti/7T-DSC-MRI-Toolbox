@@ -4,7 +4,8 @@
 This Python-based toolbox provides functions and pipeline to process Dynamic Susceptibility Contrast (DSC) MRI data acquired at 7T. A dataset of DSC MRI acquired in the spinal cord of a healthy volunteer as published in the reference below (healthy volunteer HC1) is also provided. More particularly, this toolbox provides functions to extract acquisition times from physiologs (Siemens format) for cardiac-gated acquisitions, correct signal by effective TR and discard inconsistent TRs as well as to filter breathing frequencies in the signal based on the signal measured by any respiratory device in a repiration physiolog (Siemens format) are available.</p>
 
 We thank you for choosing our toolbox! :heart: According to the Apache license 2.0, please cite the following reference:
-> **Lévy S, Roche P-H, Callot V. Dynamic Susceptibility Contrast imaging at 7T for spinal cord perfusion mapping in Cervical Spondylotic Myelopathy patients, In: *Proc. Intl. Soc. Mag. Reson. Med. 28*. 2019;3195.**
+> **Lévy S, Roche P-H, Callot V.  Feasibility of human spinal cord perfusion mapping using dynamic susceptibility contrast imaging at 7T: Preliminary results and 
+identified guidelines. *Magn Reson Med.*. 2020;00:1-12. [https://doi.org/10.1002/mrm.28559](https://doi.org/10.1002/mrm.28559)**
 
 This toolbox also provides functions and pipeline to fit a Gamma-variate function to the bolus and derive relative perfusion metrics. These functions and pipeline were adapted from the functions provided by the great toolbox [Dynamic Susceptibility Contrast MRI toolbox](https://github.com/marcocastellaro/dsc-mri-toolbox) and are therefore written in Matlab. Thank you for developing those very useful functions!
 
